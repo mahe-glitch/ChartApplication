@@ -64,6 +64,19 @@ const App: React.FC = () => {
     }
   };
 
+  const handleClearChat = () => {
+    if (window.confirm("Are you sure you want to clear the conversation history?")) {
+      setMessages([
+        {
+          id: 'reset-msg-' + Date.now(),
+          text: "Chat history cleared. How can I help you?",
+          sender: Sender.Bot,
+          timestamp: new Date(),
+        },
+      ]);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-gray-50">
       {/* Header */}
@@ -74,17 +87,24 @@ const App: React.FC = () => {
           </div>
           <div>
             <h1 className="font-bold text-gray-800 text-lg leading-tight">Simple Chat</h1>
-            <div className="flex items-center gap-1.5">
-              <span className={`w-2 h-2 rounded-full ${isLoading ? 'bg-yellow-400 animate-pulse' : 'bg-green-500'}`}></span>
-              <p className="text-xs text-gray-500 font-medium">{isLoading ? 'Typing...' : 'Online'}</p>
+            <div className="flex items-center gap-2 h-4">
+              <span className={`w-2 h-2 rounded-full transition-colors duration-300 ${isLoading ? 'bg-blue-500 animate-pulse' : 'bg-green-500'}`}></span>
+              <div className="text-xs text-gray-500 font-medium w-20">
+                {isLoading ? <TypingStatus /> : 'Online'}
+              </div>
             </div>
           </div>
         </div>
         
-        {/* Optional: Minimal info icon or menu could go here */}
-        <button className="text-gray-400 hover:text-gray-600 transition-colors p-2">
+        {/* Clear Chat Button */}
+        <button 
+          onClick={handleClearChat}
+          className="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50"
+          title="Clear Chat History"
+          aria-label="Clear Chat History"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
           </svg>
         </button>
       </header>
@@ -103,8 +123,8 @@ const App: React.FC = () => {
 
           {/* Typing Indicator Bubble */}
           {isLoading && (
-            <div className="flex justify-start mb-4 animate-pulse">
-              <div className="bg-white border border-gray-200 px-4 py-3 rounded-2xl rounded-tl-sm flex gap-1 items-center shadow-sm">
+            <div className="flex justify-start mb-4 animate-[fadeIn_0.3s_ease-out]">
+              <div className="bg-white border border-gray-200 px-4 py-3.5 rounded-2xl rounded-tl-sm flex gap-1.5 items-center shadow-sm w-fit">
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
@@ -122,6 +142,21 @@ const App: React.FC = () => {
       </footer>
     </div>
   );
+};
+
+// Internal component for the animated text dots
+const TypingStatus: React.FC = () => {
+  const [dots, setDots] = useState('');
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
+    }, 400);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return <span>Typing{dots}</span>;
 };
 
 export default App;
