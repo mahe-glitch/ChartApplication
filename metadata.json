@@ -1,0 +1,5 @@
+{
+  "name": "Simple Chat UI",
+  "description": "A responsive, frontend-only chat application with React, Tailwind CSS, and optional Gemini AI integration.",
+  "requestFramePermissions": []
+}
